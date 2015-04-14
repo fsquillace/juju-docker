@@ -16,13 +16,11 @@ USER juju
 
 RUN mkdir -p /tmp/package-query && cd /tmp/package-query && curl -J -O https://aur.archlinux.org/packages/pa/package-query/PKGBUILD && makepkg -fsc --noconfirm
 
-WORKDIR /tmp/package-query
 USER root
 
-RUN pacman --noconfirm -U package-query-*.tar.xz
-
-RUN mkdir /juju && chown juju /juju
+RUN pacman --noconfirm -U /tmp/package-query/package-query-*.tar.xz && rm -rf /tmp/package-query /var/cache/pacman/pkg/*
 
 USER juju
-WORKDIR /juju
+VOLUME ["/tmp/juju-image"]
+WORKDIR /tmp/juju-image
 ENTRYPOINT ["sh", "-c", "/run.sh"]
